@@ -1,13 +1,25 @@
+import "dotenv/config";
 import express from "express";
-import 'dotenv/config';
+import mongoose from "mongoose";
+import { DB_NAME } from "./constants.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const DB_URI = process.env.DB_URI;
 
-// app.get("/", ()=>{
-//     response.send
-// })
+(async () => {
+  try {
+    await mongoose.connect(`${DB_URI}/${DB_NAME}`);
 
-app.listen(PORT, ()=>{
-    console.log(`Backend Running on PORT : ${PORT}`)
-})
+    app.on("error", (error) => {
+      console.error("Err :", error);
+      throw error;
+    });
+    app.listen(PORT, () => {
+      console.log(`Backend Running on PORT : ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Error >>", error);
+    throw error;
+  }
+})();
